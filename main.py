@@ -15,9 +15,9 @@ bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
 chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
 
-def send_telegram_message(message):
+async def send_telegram_message(message):
     bot = Bot(token=bot_token)
-    bot.send_message(chat_id=chat_id, text=message, parse_mode="Markdown")
+    await bot.send_message(chat_id=chat_id, text=message, parse_mode="Markdown")
 
 
 def main():
@@ -63,7 +63,7 @@ Powered on at | `{current_time}`
         sys.exit(1)
 
     # Send the message
-    send_telegram_message(message)
+    asyncio.run(send_telegram_message(message))
 
 
 if __name__ == "__main__":
