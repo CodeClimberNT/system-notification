@@ -1,6 +1,7 @@
 import os
 import asyncio
 import socket
+import platform
 from datetime import datetime
 from dotenv import load_dotenv
 from telegram import Bot
@@ -12,9 +13,11 @@ load_dotenv()
 bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
 chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
+
 async def send_telegram_message(message):
     bot = Bot(token=bot_token)
-    await bot.send_message(chat_id=chat_id, text=message)
+    await bot.send_message(chat_id=chat_id, text=message, parse_mode="Markdown")
+
 
 def main():
     # Get the current date and time
@@ -22,12 +25,24 @@ def main():
 
     # Get the computer name
     computer_name = socket.gethostname()
-    
-    # Create the message with date, time, and computer name
-    message = f"Your computer '{computer_name}' has been powered on at {current_time}."
-    
+
+    # Get the operating system version
+    os_version = platform.platform()
+
+    # Create the message as a table-like structure
+    message = f"""\
+New login detected:
+```markdown
+*Parameter*   | *Value*
+--------------|-------------------------
+Computer      | `{computer_name}`
+Running       | `{os_version}`
+Powered on at | `{current_time}`
+```"""
+
     # Send the message
     asyncio.run(send_telegram_message(message))
+
 
 if __name__ == "__main__":
     main()
