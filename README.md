@@ -4,6 +4,8 @@ Personal project where i send a telegram notification everytime one of my system
 # TODO
 - [ ] Better README
 - [ ] Improve library usage
+- [ ] Add other types of notification
+- [ ] Better understanding of telegram bot to let configuration in app
 - [ ] Others (?)
       
 # Done
