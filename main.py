@@ -14,7 +14,7 @@ load_dotenv()
 bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
 chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
-valid_actions = ["powerup", "up", "shutdown", "down", "schedule"]
+valid_actions = ["powerup", "up", "shutdown", "down", "schedule", "test", "t"]
 
 def print_usage_and_exit():
     print("Usage: python script.py <action>")
@@ -52,7 +52,9 @@ def main():
         "up": "System Powerup",
         "shutdown": "System Shutdown",
         "down": "System Shutdown",
-        "schedule": "System Shutdown Scheduled"
+        "schedule": "System Shutdown Scheduled",
+        "test": "Test",
+        "t": "Test"
     }
 
     # Concatenate action title to message body
