@@ -1,9 +1,8 @@
 use reqwest::Client;
 use serde_json::json;
-use std::env;
-// use std::time::{SystemTime, UNIX_EPOCH};
+use std::{env, fmt};
 use sysinfo::System;
-use time::{OffsetDateTime, format_description::well_known::Rfc2822};
+use time::{format_description::well_known::Rfc2822, OffsetDateTime};
 
 #[derive(Debug, PartialEq)]
 enum Action {
@@ -27,25 +26,98 @@ impl Action {
         }
     }
 
-    fn to_string(&self) -> &str {
+    fn to_string(&self) -> String {
         match self {
-            Action::PowerUp => "System Powerup",
-            Action::Shutdown => "System Shutdown",
-            Action::Schedule => "System Shutdown Scheduled",
-            Action::Test => "Test",
-            Action::Reboot => "System Reboot",
-            Action::Unknown => "Unknown Action",
+            Action::PowerUp => String::from("System Powerup"),
+            Action::Shutdown => String::from("System Shutdown"),
+            Action::Schedule => String::from("System Shutdown Scheduled"),
+            Action::Test => String::from("Test"),
+            Action::Reboot => String::from("System Reboot"),
+            Action::Unknown => String::from("Unknown"),
         }
     }
+}
+
+impl fmt::Display for Action {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
+
+struct Message {
+    action: Action,
+    computer_name: String,
+    os_info: String,
+    current_time: String,
+    scheduled_time: Option<OffsetDateTime>,
+}
+
+impl Message {
+    fn from_action(action: Action) -> Self {
+        let action = action;
+        let computer_name = get_computer_name();
+        let os_info = get_os_info();
+        let current_time = get_current_time();
+        let scheduled_time = None;
+
+        Message {
+            action,
+            computer_name,
+            os_info,
+            current_time,
+            scheduled_time,
+        }
+    }
+
+    fn create_message(&self) -> String {
+        match self.action {
+            Action::Schedule => {
+                let scheduled_time = self
+                    .scheduled_time
+                    .map(|time| get_readable_time(time))
+                    .unwrap_or_else(|| "Unknown".to_string());
+
+                format!(
+                    r#"{} at {}:
+```markdown
+Computer     | `{}`
+Running      | `{}`
+Time         | `{}`
+```"#,
+                    self.action,
+                    scheduled_time,
+                    self.computer_name,
+                    self.os_info,
+                    self.current_time
+                )
+            }
+            _ => format!(
+                r#"{} Alert:
+```markdown
+Computer     | `{}`
+Running      | `{}`
+Time         | `{}`
+```"#,
+                self.action, self.computer_name, self.os_info, self.current_time
+            ),
+        }
+    }
+}
+
+fn get_readable_time(time: OffsetDateTime) -> String {
+    time.format(&Rfc2822)
+        .ok()
+        .unwrap_or_else(|| "Unknown".to_string())
+        .to_string()
 }
 
 fn get_current_time() -> String {
     let current_time_local = OffsetDateTime::now_local();
 
-    return match current_time_local{
-        Ok(time) => time.format(&Rfc2822).ok().unwrap_or("Unknown".to_string()).to_string(),
-        Err(_) => "Unknown".to_string()
-    }
+    return match current_time_local {
+        Ok(time) => get_readable_time(time),
+        Err(_) => "Unknown".to_string(),
+    };
 }
 
 fn get_system_name() -> String {
@@ -66,6 +138,28 @@ fn get_os_info() -> String {
     format!("{} {}", system_name, os_version)
 }
 
+async fn send_discord_message(webhook_url: &str, message: Message) -> Result<(), reqwest::Error> {
+
+    let json_payload = json!({
+        "content": message.create_message()
+    });
+
+    let client = Client::new();
+    let res = client
+        .post(webhook_url)
+        .header("Content-Type", "application/json")
+        .body(json_payload.to_string())
+        .send()
+        .await?;
+
+    #[cfg(debug_assertions)]
+    {
+        println!("{:?}", res);
+    }
+
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv::dotenv().ok(); // Load environment variables from .env file
@@ -80,35 +174,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let action_str = &args[1];
     let action = Action::from_str(action_str);
 
-    let computer_name = get_computer_name();
-    let os_info = get_os_info();
-    let current_time = get_current_time();
+    let message = Message::from_action(action);
 
-    let action_title = action.to_string();
-
-    let message = format!(
-        r#"{} Alert:
-```markdown
-Computer     | `{}`
-Running      | `{}`
-Time         | `{}`
-```"#,
-        action_title, computer_name, os_info, current_time
-    );
-
-    let json_payload = json!({
-        "content": message
-    });
-
-    let client = Client::new();
-    let res = client
-        .post(&webhook_url)
-        .header("Content-Type", "application/json")
-        .body(json_payload.to_string())
-        .send()
-        .await?;
-
-    println!("{:?}", res);
+    send_discord_message(&webhook_url, message).await?;
 
     Ok(())
 }
