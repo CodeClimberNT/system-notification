@@ -1,12 +1,16 @@
-# Telegram-System-Notification
-Automating System Notification using python bot
+# System Notification
+Automating System Notification using rust
 
 ## TODO
 - [ ] Better README
-- [ ] Improve library usage
-- [ ] Add other types of notification
+- [ ] ⚠️ Add other types of notification
 - [ ] Better understanding of telegram bot to let configuration in app
 - [ ] Others (?)
       
 ## Done
-- [x] Notification when system schedule to turn off
+- [x] Notification when system schedule to power off
+- [x] Single file to launch with parameters
+- [x] Rewritten in Rust
+- [x] Discord Webhook
+- [x] Better Code Modularity
+
