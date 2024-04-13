@@ -4,12 +4,13 @@ Automating System Notification using rust
 ## Usage
 Very easy to use, launch the program with the terminal with an arguments to send a notification
 
-| powerup up    | send a notification that the system was powered on                             |
-|---------------|--------------------------------------------------------------------------------|
-| shutdown down | send a notification that the system was powered off                            |
-| schedule X    | Send a notification that the system scheduled will be powered off in X minutes |
-| reboot        | Send a notification that the system started a reboot event                     |
-| test          | Send a test alert                                                              |
+| Args            | Description                                                                    |
+|-----------------|--------------------------------------------------------------------------------|
+| powerup (up)    | send a notification that the system was powered on                             |
+| shutdown (down) | send a notification that the system was powered off                            |
+| schedule X      | Send a notification that the system scheduled will be powered off in X minutes |
+| reboot          | Send a notification that the system started a reboot event                     |
+| test            | Send a test alert                                                              |
 
 ⚠️ REMEMBER ⚠️ schedule require also a value to tell when the schedule will happen!
 
