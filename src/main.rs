@@ -214,9 +214,7 @@ impl Sender {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sender = Sender::from_env();
-
     let action = Action::from_cli()?;
-
     let message = Message::from_action(action);
 
     sender.send_discord_message(message).await?;
