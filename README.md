@@ -1,3 +1,4 @@
+[![Test](https://github.com/CodeClimberNT/system-notification/actions/workflows/test.yml/badge.svg)](https://github.com/CodeClimberNT/system-notification/actions/workflows/test.yml)
 # System Notification
 Automating System Notification using rust
 
