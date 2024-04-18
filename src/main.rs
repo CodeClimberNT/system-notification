@@ -1,4 +1,5 @@
 use chrono::{DateTime, Duration, Local, TimeDelta};
+use dotenv::dotenv;
 use reqwest::Client;
 use serde_json::json;
 use std::{env, fmt};
@@ -182,7 +183,7 @@ struct Sender {
 impl Sender {
     fn from_env() -> Self {
         // Load environment variables from .env file
-        dotenv::dotenv().ok();
+        dotenv().ok();
 
         let webhook_url = env::var("DISCORD_WEBHOOK_URL").expect("DISCORD_WEBHOOK_URL not set");
 
