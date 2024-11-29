@@ -14,7 +14,8 @@ Very easy to use, launch the program with the terminal with an arguments to send
 | reboot          | Send a notification that the system started a reboot event                     |
 | test            | Send a test alert                                                              |
 
-⚠️ REMEMBER ⚠️ schedule require also a value to tell when the schedule will happen!
+> [!Important]
+> Schedule require a value that represent when the system will be powered off
 
 ## Installation
 For now the program send a discord message using webhook. That simply means that other than an url you don't need to do anything.
@@ -36,10 +37,10 @@ Now launch the program from the terminal with the arguments that you like and yo
 ## TODO
 - [ ] Better README
 - [ ] ⚠️ Add other types of notification
-- [ ] Implementing a multiplatform application
 - [ ] Others (?)
       
 ## Done
+- [x] Implementing a multiplatform application
 - [x] Notification when system schedule to power off
 - [x] Single file to launch with parameters
 - [x] Rewritten in Rust
