@@ -72,7 +72,7 @@ impl Action {
     fn from_cli() -> Result<Self, Box<dyn std::error::Error>> {
         let args: Vec<String> = env::args().collect();
         if args.len() < 2 {
-            return Err("Please provide an action as a command-line argument.");
+            return Err("Please provide an action as a command-line argument.".into());
         }
 
         let action_str = args[1].as_str();
