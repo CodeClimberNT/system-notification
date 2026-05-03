@@ -1,6 +1,6 @@
-use chrono::{DateTime, Duration, Local, TimeDelta};
-use dotenv::dotenv;
-use reqwest::Client;
+use chrono::{DateTime, Local, TimeDelta};
+use dotenvy::dotenv;
+use reqwest::{Client};
 use serde_json::json;
 use std::{env, fmt};
 use sysinfo::System;
@@ -35,7 +35,7 @@ impl Action {
 
         let action_str = &args[1];
         let amount_of_time: Option<TimeDelta> = if args.len() >= 3 {
-            Duration::try_minutes(args[2].parse().unwrap())
+            TimeDelta::try_minutes(args[2].parse().unwrap())
         } else {
             None
         };
@@ -91,7 +91,7 @@ impl Time {
     }
 
     fn get_scheduled_time(offset: i64) -> DateTime<Local> {
-        Local::now() + Duration::minutes(offset)
+        Local::now() + TimeDelta::minutes(offset)
     }
 
     fn get_current_time() -> DateTime<Local> {
@@ -108,16 +108,11 @@ struct SystemInfo {
 
 impl SystemInfo {
     fn new() -> Self {
-        let computer_name = SystemInfo::get_computer_name();
-        let _system_name = SystemInfo::get_system_name();
-        let _os_version = SystemInfo::get_os_version();
-        let os_info = SystemInfo::get_os_info();
-
         SystemInfo {
-            computer_name,
-            _system_name,
-            _os_version,
-            os_info,
+            computer_name: SystemInfo::get_computer_name(),
+            _system_name: SystemInfo::get_system_name(),
+            os_info: SystemInfo::get_os_info(),
+            _os_version: SystemInfo::get_os_version(),
         }
     }
 
@@ -136,7 +131,7 @@ impl SystemInfo {
     fn get_os_info() -> String {
         let system_name = SystemInfo::get_system_name();
         let os_version = SystemInfo::get_os_version();
-        format!("{} {}", system_name, os_version)
+        format!("{system_name} {os_version}")
     }
 }
 
@@ -148,7 +143,6 @@ struct Message {
 
 impl Message {
     fn from_action(action: Action) -> Self {
-        let action = action;
         let system = SystemInfo::new();
         let current_time = Time::get_current_time();
 
@@ -163,16 +157,16 @@ impl Message {
         let title = format!("{}:", self.action);
 
         let body = format!(
-            r#"```markdown
+            r"```markdown
 Computer     | `{}`
 Running      | `{}`
 Alert Time   | `{}`
-```"#,
+```",
             self.system.computer_name,
             self.system.os_info,
             Time::get_formatted_time(self.current_time)
         );
-        return format!("{}\n{}", title, body);
+        format!("{title}\n{body}")
     }
 }
 
@@ -205,7 +199,7 @@ impl Sender {
 
         #[cfg(debug_assertions)]
         {
-            println!("{:?}", res);
+            println!("{res:?}");
         }
 
         Ok(())
