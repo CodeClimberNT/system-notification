@@ -185,7 +185,7 @@ impl Message {
         let title = format!("{}:", self.action);
 
         let body = format!(
-            r"```markdown
+            "```markdown
 Computer     | `{}`
 Running      | `{}`
 Alert Time   | `{}`
