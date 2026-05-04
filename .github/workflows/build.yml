@@ -24,9 +24,9 @@ jobs:
           - os: windows-latest
             artifact_name: ${{ github.event.repository.name }}.exe
             asset_name: ${{ github.event.repository.name }}-windows-amd64.exe
-          - os: macos-13
-            artifact_name: ${{ github.event.repository.name }}
-            asset_name: ${{ github.event.repository.name }}-macos-amd64
+          # - os: macos-13
+          #   artifact_name: ${{ github.event.repository.name }}
+          #   asset_name: ${{ github.event.repository.name }}-macos-amd64
 
     runs-on: ${{ matrix.os }}
     steps:
